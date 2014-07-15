@@ -1,0 +1,22 @@
+{
+    "name": "yakud/genetic_atlas",
+    "authors": [
+        {
+            "name": "Aleksey Kiselev",
+            "email": "yakudgm@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "predis/predis": "1.0.*@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src",
+            "tests"
+        ]
+    }
+}

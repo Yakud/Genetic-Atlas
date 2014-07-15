@@ -1,0 +1,9 @@
+.idea
+stasmap.zip
+db_markers/*
+
+/vendor/
+composer.lock
+db/*
+
+Genetic-Atlas
