@@ -49,6 +49,19 @@ class PointRedisStorage extends RedisStorage {
     }
 
     /**
+     * Удаляет точку из стораджа
+     * @param Point $Point
+     * @return mixed
+     */
+    public function delete(Point $Point) {
+        $pointId = $Point->getFieldValue('id');
+        $Point->import(['id' => 0]);
+
+        $storageKey = $this->makeKeyPoint($pointId);
+        return $this->getClient()->executeRaw(['DEL', $storageKey]);
+    }
+
+    /**
      * @param int $id
      * @return Point|null
      */
