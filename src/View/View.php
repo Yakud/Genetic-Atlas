@@ -54,6 +54,7 @@ class View {
      * Рендерит вьюху
      * @param string $view
      * @param array $data
+     * @throws Exception\ViewIncludeException
      * @return string
      */
     public function make($view, array $data = array()) {
