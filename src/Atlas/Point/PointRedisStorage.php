@@ -35,14 +35,14 @@ class PointRedisStorage extends RedisStorage {
         $pointId = $Point->getFieldValue('id');
         if (!$pointId) {
             // Не передали ID, сгенерируем новый
-            $pointId = $this->incrementNextPointId();
+            $pointId = $this->incrementPointId();
             $Point->import(['id' => $pointId]);
         }
 
         $data = $Point->export();
         $data = json_encode($data);
 
-        $storageKey = $this->makePointKey($pointId);
+        $storageKey = $this->makeKeyPoint($pointId);
         $this->getClient()->executeRaw(['SET', $storageKey, $data]);
 
         return $pointId;
@@ -53,7 +53,7 @@ class PointRedisStorage extends RedisStorage {
      * @return Point|null
      */
     public function getPointById($id) {
-        $storageKey = $this->makePointKey($id);
+        $storageKey = $this->makeKeyPoint($id);
 
         $data = $this->getClient()->executeRaw(['GET', $storageKey]);
         if ($data) {
@@ -64,26 +64,21 @@ class PointRedisStorage extends RedisStorage {
         return null;
     }
 
-    /**
-     * @return array
-     */
-    public function getStorageConfig() {
-        $config = parent::getStorageConfig();
-
-        $config['database'] = self::STORAGE_NAME;
-        $config['prefix']   = self::STORAGE_NAME;
-        return $config;
-    }
-
-    protected function makePointKey($id) {
-        return self::KEY_POINT . self::SEPARATOR . $id;
-    }
-
-    protected function incrementNextPointId() {
-        return $this->getClient()->executeRaw(['INCR', self::KEY_POINT_ID]);
+    protected function incrementPointId() {
+        $key = $this->makeKeyPointId();
+        return $this->getClient()->executeRaw(['INCR', $key]);
     }
 
     public function resetTotalPoints() {
-        return $this->getClient()->executeRaw(['DEL', self::KEY_POINT_ID]);
+        $key = $this->makeKeyPointId();
+        return $this->getClient()->executeRaw(['DEL', $key]);
+    }
+
+    protected function makeKeyPointId() {
+        return static::STORAGE_NAME . static::SEPARATOR . static::KEY_POINT_ID;
+    }
+
+    protected function makeKeyPoint($id) {
+        return static::STORAGE_NAME . static::SEPARATOR . static::KEY_POINT . static::SEPARATOR . $id;
     }
 }

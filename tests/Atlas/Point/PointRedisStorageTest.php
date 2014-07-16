@@ -3,6 +3,7 @@ namespace tests\Atlas\Point;
 
 use Atlas\Point\Point;
 use Atlas\Point\PointRedisStorage;
+use Atlas\Point\TestPointRedisStorage;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -17,37 +18,42 @@ class PointRedisStorageTest extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
         $Storage = $this->getStorage();
+
         $this->assertInstanceOf('Atlas\\Point\\PointRedisStorage', $Storage);
     }
 
     public function testSavePoint() {
-        $Point = $this->getPoint([
-            'id'   => '500',
-            'type' => 'test_type',
+        $Point = $this->createPoint();
+        $id = $this->getStorage()->save($Point);
+
+        $this->assertEquals(1, $id);
+    }
+
+    public function testGetPoint() {
+        $Point = $this->createPoint([
+            'type' => 'test_type'
         ]);
 
         $Storage = $this->getStorage();
         $id = $Storage->save($Point);
 
-        $Point = $Storage->getPointById($id);
-        var_export($Point);
+        $PointFromStorage = $Storage->getPointById($id);
+
+        $this->assertEquals($Point->getFieldValue('id'), $PointFromStorage->getFieldValue('id'));
+        $this->assertEquals($Point->getFieldValue('type'), $PointFromStorage->getFieldValue('type'));
     }
 
     //////////////////////////////////////////////////////////////////
-    /**
-     * @var PointRedisStorage
-     */
     protected $RedisStorage = null;
 
     /**
-     * @return PointRedisStorage
+     * @return TestPointRedisStorage
      */
     protected function getStorage() {
-        if ($this->RedisStorage) {
-            return $this->RedisStorage;
+        if (!$this->RedisStorage) {
+            $this->RedisStorage = new TestPointRedisStorage();
         }
 
-        $this->RedisStorage = new PointRedisStorage();
         return $this->RedisStorage;
     }
 
@@ -55,7 +61,7 @@ class PointRedisStorageTest extends PHPUnit_Framework_TestCase {
      * @param array $data
      * @return Point
      */
-    protected function getPoint(array $data = array()) {
+    protected function createPoint(array $data = array()) {
         return new Point($data);
     }
 } 
