@@ -25,7 +25,9 @@ Atlas.Marker.MarkerModel.prototype.import = function (data) {
     this.lat  = data.lat  !== undefined ? data.lat  : 0;
     this.lon  = data.lon  !== undefined ? data.lon  : 0;
     this.type = data.type !== undefined ? data.type : null;
-    this.data = data.data !== undefined ? data.data : {};
+    this.data = {
+        population_id : data.population_id,
+    };
 
     return this;
 };

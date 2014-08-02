@@ -27,16 +27,20 @@ Atlas.Map.prototype.init = function(canvasId) {
 };
 
 /**
- *
+ * Добавляет маркер
  * @param {Atlas.Marker.MarkerModel} Marker
  */
 Atlas.Map.prototype.addMarker = function(Marker) {
     var marker = new google.maps.Marker({
         position : Marker.getPosition(),
+        position : Marker.getPosition(),
         map      : this.GoogleMap
     });
 
     this.markers.push(marker);
+
+    this.textOverlay = new TxtOverlay(Marker.getPosition(), Marker.data.population_id, "titleOfMarker");
+    this.textOverlay.setMap(this.GoogleMap);
 };
 
 /**

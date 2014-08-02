@@ -24,7 +24,7 @@ class FirstDataSetParser {
         $Storage = new PointRedisStorage();
 
         while ($buffer = fgets($handle)) {
-            list($populationId, , $lat, $lon) = explode("\t", trim($buffer));
+            list($populationId, $region, $lat, $lon) = explode("\t", trim($buffer));
 
             if ($populationId == 'Population_ID') {
                 continue;
@@ -34,6 +34,7 @@ class FirstDataSetParser {
                 'type' => (int)1,
                 'lat' => (double)$lat,
                 'lon' => (double)$lon,
+                'region' => $region,
                 'population_id' => $populationId,
             ]);
             var_export($Point);

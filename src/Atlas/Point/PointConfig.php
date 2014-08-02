@@ -49,6 +49,9 @@ class PointConfig {
         'population_id' => array(
             'default' => '',
         ),
+        'region' => array(
+            'default' => '',
+        ),
     );
 
     /**
