@@ -6,7 +6,27 @@ namespace Atlas\Point;
  * @author akiselev
  */
 class Point {
+    /**
+     * Текущие данные точки
+     * @var array
+     */
     protected $fields = array();
+
+    /**
+     * Данные которые в базе или были загружены первый раз
+     * @var array
+     */
+    protected $fieldsOld  = array();
+
+    /**
+     * Импортированы ли данные в модель
+     * @var bool
+     */
+    protected $isImported = false;
+
+    /**
+     * @var PointConfig
+     */
     protected $Config = null;
 
     public function __construct(array $data = array()) {
@@ -21,10 +41,16 @@ class Point {
         $defaults = $this->getConfig()->getDefaults();
 
         foreach ($data as $filedName => $filedValue) {
-            if (isset($defaults[$filedName])) {
+            if (array_key_exists($filedName, $defaults)) {
                 $this->fields[$filedName] = $filedValue;
+
+                if (!$this->isImported) {
+                    $this->fields[$filedName] = $filedValue;
+                }
             }
         }
+
+        $this->isImported = true;
     }
 
     /**
@@ -33,7 +59,7 @@ class Point {
      * @return mixed
      */
     public function getFieldValue($fieldName) {
-        if (isset($this->fields[$fieldName])) {
+        if (array_key_exists($fieldName, $this->fields)) {
             return $this->fields[$fieldName];
         }
 
@@ -46,6 +72,10 @@ class Point {
      */
     public function export() {
         return $this->fields;
+    }
+
+    public function exportOld() {
+        return $this->fieldsOld;
     }
 
     /**

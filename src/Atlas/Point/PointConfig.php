@@ -38,13 +38,16 @@ class PointConfig {
             'default' => 0,
         ),
         'type' => array(
-            'default' => '',
+            'default' => null,
         ),
         'lat' => array(
             'default' => 0.0,
         ),
         'lon' => array(
             'default' => 0.0,
+        ),
+        'population_id' => array(
+            'default' => '',
         ),
     );
 
@@ -56,7 +59,7 @@ class PointConfig {
         $defaults = array();
 
         foreach ($this->config as $fieldName => $fieldData) {
-            if (isset($fieldData['default'])) {
+            if (array_key_exists('default', $fieldData)) {
                 $defaults[$fieldName] = $fieldData['default'];
             } else {
                 $defaults[$fieldName] = null;
@@ -72,7 +75,7 @@ class PointConfig {
      * @return mixed
      */
     public function getDefaultValue($fieldName) {
-        if (isset($this->config[$fieldName]['default'])) {
+        if (array_key_exists('default', $this->config[$fieldName])) {
             return $this->config[$fieldName]['default'];
         }
 

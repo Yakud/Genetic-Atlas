@@ -1,5 +1,6 @@
 <?php
 namespace View;
+
 use View\Exception\ViewIncludeException;
 
 /**
@@ -93,7 +94,7 @@ class View {
 
         try {
             if((@include $viewPath) === false) {
-                throw new ViewIncludeException("view \"{$view}\" not found at path \"{$viewPath}\"");
+                throw new ViewIncludeException("templates \"{$view}\" not found at path \"{$viewPath}\"");
             }
         } catch (ViewIncludeException $Ex) {
             ob_clean();

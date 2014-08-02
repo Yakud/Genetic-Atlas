@@ -12,7 +12,7 @@ use PHPUnit_Framework_TestCase;
 class PointRedisStorageTest extends PHPUnit_Framework_TestCase {
     protected function setUp() {
         $Storage = $this->getStorage();
-        $Storage->resetTotalPoints();
+        $Storage->resetCounterPointId();
     }
 
     public function testSimple() {

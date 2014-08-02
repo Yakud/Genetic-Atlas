@@ -8,11 +8,16 @@ use Storage\RedisStorage;
  * @author yakud
  */
 class PointRedisStorage extends RedisStorage {
+    const STORAGE_NAME   = 'points';
+    const KEY_POINT      = 'point';
+    const SEPARATOR      = ':';
+    const KEY_COUNTER_ID = 'counter_id';
 
-    const STORAGE_NAME = 'points';
-    const KEY_POINT_ID = '_id';
-    const KEY_POINT    = 'point';
-    const SEPARATOR    = ':';
+    /**
+     * Список индексов
+     */
+    const INDEX_ID            = 'index_id';            // Индекс по id
+    const INDEX_POPULATION_ID = 'index_population_id'; // Индекс по population_id
 
     /**
      * @var Point[]
@@ -35,15 +40,18 @@ class PointRedisStorage extends RedisStorage {
         $pointId = $Point->getFieldValue('id');
         if (!$pointId) {
             // Не передали ID, сгенерируем новый
-            $pointId = $this->incrementPointId();
+            $pointId = $this->incrementCounterPointId();
             $Point->import(['id' => $pointId]);
         }
 
-        $data = $Point->export();
-        $data = json_encode($data);
+        $data = json_encode($Point->export());
 
+        // Добавим точку
         $storageKey = $this->makeKeyPoint($pointId);
-        $this->getClient()->executeRaw(['SET', $storageKey, $data]);
+        $this->executeRaw(['SET', $storageKey, $data]);
+
+        // Обновим индекс
+        $this->updatePointIndex($Point);
 
         return $pointId;
     }
@@ -55,20 +63,25 @@ class PointRedisStorage extends RedisStorage {
      */
     public function delete(Point $Point) {
         $pointId = $Point->getFieldValue('id');
-        $Point->import(['id' => 0]);
 
         $storageKey = $this->makeKeyPoint($pointId);
-        return $this->getClient()->executeRaw(['DEL', $storageKey]);
+        $this->executeRaw(['DEL', $storageKey]);
+
+        $this->removePointFromIndex($Point);
+        $Point = null;
+
+        return true;
     }
 
     /**
+     * Возвращает точку по ID
      * @param int $id
      * @return Point|null
      */
     public function getPointById($id) {
         $storageKey = $this->makeKeyPoint($id);
 
-        $data = $this->getClient()->executeRaw(['GET', $storageKey]);
+        $data = $this->executeRaw(['GET', $storageKey]);
         if ($data) {
             $data = json_decode($data, true);
             return new Point($data);
@@ -77,21 +90,135 @@ class PointRedisStorage extends RedisStorage {
         return null;
     }
 
-    protected function incrementPointId() {
-        $key = $this->makeKeyPointId();
-        return $this->getClient()->executeRaw(['INCR', $key]);
+    /**
+     * Обновляет индексы для точки
+     * @param Point $Point
+     * @return bool
+     */
+    public function updatePointIndex(Point $Point) {
+        $id           = $Point->getFieldValue('id');
+        $populationId = $Point->getFieldValue('population_id');
+        $oldData      = $Point->exportOld();
+
+        if (!$id) {
+            return false;
+        }
+
+        $this->executeRaw(['SADD', $this->makeKey(self::INDEX_ID), $id]);
+
+        if (array_key_exists('population_id', $oldData)) {
+            $this->removeFromIndex(self::INDEX_POPULATION_ID, $oldData['population_id'], $id);
+        }
+        $this->addToIndex(self::INDEX_POPULATION_ID, $populationId, $id);
+
+        return true;
     }
 
-    public function resetTotalPoints() {
-        $key = $this->makeKeyPointId();
-        return $this->getClient()->executeRaw(['DEL', $key]);
+    /**
+     * Удаляет точку из индексов
+     * @param Point $Point
+     * @return bool
+     */
+    public function removePointFromIndex(Point $Point) {
+        $id           = $Point->getFieldValue('id');
+        $populationId = $Point->getFieldValue('population_id');
+
+        if (!$id) {
+            return false;
+        }
+
+        $this->executeRaw(['SREM', $this->makeKey(self::INDEX_ID), $id]);
+        $this->removeFromIndex(self::INDEX_ID, $populationId, $id);
+
+        return true;
     }
 
-    protected function makeKeyPointId() {
-        return static::STORAGE_NAME . static::SEPARATOR . static::KEY_POINT_ID;
+    /**
+     * Добавляет элемент в индекс
+     * @param string $index
+     * @param mixed $key
+     * @param mixed $value
+     * @return mixed
+     */
+    public function addToIndex($index, $key, $value) {
+        $indexKey = $this->makeKeyIndex($index, $key);
+        return $this->executeRaw(['SADD', $indexKey, $value]);
     }
 
+    /**
+     * Удаляет данные из индекса
+     * @param string $index
+     * @param mixed $key
+     * @param mixed $value
+     * @return mixed
+     */
+    public function removeFromIndex($index, $key, $value) {
+        $indexKey = $this->makeKeyIndex($index, $key);
+        return $this->executeRaw(['SREM', $indexKey, $value]);
+    }
+
+    /**
+     * Очищает индекс
+     * @param string $index
+     * @param $key
+     * @return mixed
+     */
+    public function clearIndex($index, $key) {
+        $indexKey = $this->makeKeyIndex($index, $key);
+        return $this->executeRaw(['HDEL', $indexKey]);
+    }
+
+    /**
+     * Возвращает список всех идентификаторов точек
+     * @return array
+     */
+    public function getPointsIds() {
+        return $this->executeRaw(['SMEMBERS', $this->makeKey(self::INDEX_ID)]);
+    }
+
+    /**
+     * Увеличивает счетик ID'ков
+     * @return mixed
+     */
+    protected function incrementCounterPointId() {
+        $key = $this->makeKey(static::KEY_COUNTER_ID);
+        return $this->executeRaw(['INCR', $key]);
+    }
+
+    /**
+     * Сбрасывает счетчик ID'ков
+     * @return mixed
+     */
+    public function resetCounterPointId() {
+        $key = $this->makeKey(static::KEY_COUNTER_ID);
+        return $this->executeRaw(['DEL', $key]);
+    }
+
+    /**
+     * Ключ точки по ID
+     * @param int $id
+     * @return string
+     */
     protected function makeKeyPoint($id) {
-        return static::STORAGE_NAME . static::SEPARATOR . static::KEY_POINT . static::SEPARATOR . $id;
+        return $this->makeKey(static::KEY_POINT . static::SEPARATOR . $id);
+    }
+
+    /**
+     * Ключ для индекса
+     * @param string $index
+     * @param string $key
+     * @return string
+     */
+    protected function makeKeyIndex($index, $key) {
+        return $this->makeKey($index . self::SEPARATOR . $key);
+    }
+
+    /**
+     * Создает ключ с префиксом сторраджа
+     * @param string $key
+     * @return string
+     */
+    protected function makeKey($key = '') {
+        return static::STORAGE_NAME . static::SEPARATOR . $key;
     }
 }

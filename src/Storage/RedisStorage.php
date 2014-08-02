@@ -40,4 +40,14 @@ abstract class RedisStorage {
 
         return $this->RedisClient;
     }
+
+    /**
+     * @see Client::executeRaw
+     * @param array $arguments Command arguments as defined by the command signature.
+     * @param bool $error      Set to TRUE when Redis returned an error response.
+     * @return mixed
+     */
+    public function executeRaw(array $arguments, &$error = null) {
+        return $this->getClient()->executeRaw($arguments, $error);
+    }
 } 
