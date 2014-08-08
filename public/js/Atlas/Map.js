@@ -45,8 +45,8 @@ Atlas.Map.prototype.addMarker = function(Marker) {
 
     this.markers.push(marker);
 
-//    this.textOverlay = new TxtOverlay(Marker.getPosition(), Marker.data.population_id, "titleOfMarker");
-//    this.textOverlay.setMap(this.GoogleMap);
+    this.textOverlay = new TxtOverlay(Marker.getPosition(), Marker.data.population_id, "titleOfMarker");
+    this.textOverlay.setMap(this.GoogleMap);
 };
 
 /**

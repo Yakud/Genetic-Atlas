@@ -24,10 +24,10 @@ class PointController extends Controller {
                 'population_id'
             ));
 
-            if(array_key_exists($pointData['lat'].$pointData['lon'], $Points)) {
-                $pointData['lat'] += 0.005 + rand(0, 0.005);
-                $pointData['lon'] += 0.005 + rand(0, 0.005);
-            }
+//            if(array_key_exists($pointData['lat'].$pointData['lon'], $Points)) {
+//                $pointData['lat'] += 0.005 + rand(0, 0.005);
+//                $pointData['lon'] += 0.005 + rand(0, 0.005);
+//            }
 
 //            $Points[] = $pointData;
             $Points[$pointData['lat'].$pointData['lon']] = $pointData;
