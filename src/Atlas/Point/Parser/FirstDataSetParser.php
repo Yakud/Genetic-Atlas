@@ -1,6 +1,7 @@
 <?php
 namespace Atlas\Point\Parser;
 use Atlas\Point\Point;
+use Atlas\Point\PointElasticSearchStorage;
 use Atlas\Point\PointRedisStorage;
 use Exception;
 
@@ -21,7 +22,8 @@ class FirstDataSetParser {
             throw new Exception('Error opening file ' . $this->filePath);
         }
 
-        $Storage = new PointRedisStorage();
+        $StorageRedis = new PointRedisStorage();
+        $StorageES    = new PointElasticSearchStorage();
 
         while ($buffer = fgets($handle)) {
             list($populationId, $region, $lat, $lon) = explode("\t", trim($buffer));
@@ -37,8 +39,11 @@ class FirstDataSetParser {
                 'region' => $region,
                 'population_id' => $populationId,
             ]);
-            var_export($Point);
-            $Storage->save($Point);
+
+            $StorageRedis->save($Point);
+            $StorageES->save($Point);
+
+            echo "Save point {$Point->getFieldValue('id')}\n";
         }
 
         fclose($handle);

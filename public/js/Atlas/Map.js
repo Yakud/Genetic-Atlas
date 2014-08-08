@@ -5,6 +5,12 @@ Atlas.Map = function(canvasId) {
     this.GoogleMap = null;
 
     /**
+     * Кластер маркеров
+     * @type {MarkerClusterer}
+     */
+    this.MarkerCluster = null;
+
+    /**
      * Маркеры на карте
      * @type {google.maps.Marker[]}
      */
@@ -39,8 +45,8 @@ Atlas.Map.prototype.addMarker = function(Marker) {
 
     this.markers.push(marker);
 
-    this.textOverlay = new TxtOverlay(Marker.getPosition(), Marker.data.population_id, "titleOfMarker");
-    this.textOverlay.setMap(this.GoogleMap);
+//    this.textOverlay = new TxtOverlay(Marker.getPosition(), Marker.data.population_id, "titleOfMarker");
+//    this.textOverlay.setMap(this.GoogleMap);
 };
 
 /**
@@ -52,4 +58,17 @@ Atlas.Map.prototype.reindexMarkers = function() {
     for (var i in this.markers) {
         this.markers[i].indexMarker = i;
     }
+
+    if (this.MarkerCluster != null) {
+        this.MarkerCluster.clearMarkers();
+        this.MarkerCluster = null;
+    }
+
+    this.MarkerCluster = new MarkerClusterer(this.GoogleMap, this.markers, {
+        zoomOnClick: false,
+    });
+
+    google.maps.event.trigger(this.MarkerCluster, 'clusterclick', function() {
+        alert(1);
+    });
 };

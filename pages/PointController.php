@@ -16,8 +16,24 @@ class PointController extends Controller {
         $Points    = array();
 
         foreach ($pointsIds as $pointId) {
-            $Points[] = $Storage->getPointById($pointId)->export();
+            $Point = $Storage->getPointById($pointId);
+            $pointData = $Point->export(array(
+                'id',
+                'lat',
+                'lon',
+                'population_id'
+            ));
+
+            if(array_key_exists($pointData['lat'].$pointData['lon'], $Points)) {
+                $pointData['lat'] += 0.005 + rand(0, 0.005);
+                $pointData['lon'] += 0.005 + rand(0, 0.005);
+            }
+
+//            $Points[] = $pointData;
+            $Points[$pointData['lat'].$pointData['lon']] = $pointData;
         }
+
+        $Points = array_values($Points);
 
         return ResponseHandler::json([
             'points' => $Points,

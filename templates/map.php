@@ -10,6 +10,8 @@
 <script src="js/Atlas/Marker/MarkerFactory.js"></script>
 <script src="js/Atlas/Marker/MarkersStorage.js"></script>
 <script src="js/TxtOverlay.js"></script>
+<script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
+
 
 <script type="text/javascript">
     var MarkerModel   = Atlas.Marker.MarkerModel;
@@ -22,5 +24,9 @@
         });
 
         Map.reindexMarkers();
+    });
+
+    google.maps.event.addListener(Map.GoogleMap, "click", function(event) {
+        console.log(event.latLng);
     });
 </script>

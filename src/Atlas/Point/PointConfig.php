@@ -36,21 +36,59 @@ class PointConfig {
     protected $config = array(
         'id' => array(
             'default' => 0,
+            'description' => 'ID',
         ),
         'type' => array(
             'default' => null,
+            'description' => 'Тип',
         ),
         'lat' => array(
             'default' => 0.0,
+            'description' => 'Широта',
         ),
         'lon' => array(
             'default' => 0.0,
+            'description' => 'Долгота',
         ),
         'population_id' => array(
             'default' => '',
+            'description' => 'ID популяции',
+        ),
+        'verbose_population_id' => array(
+            'default' => '',
+            'description' => 'ID популяции (полный)',
         ),
         'region' => array(
             'default' => '',
+            'description' => 'Регион',
+        ),
+        'country' => array(
+            'default' => '',
+            'description' => 'Страна',
+        ),
+        'town' => array(
+            'default' => '',
+            'description' => 'Город',
+        ),
+        'sample_id' => array(
+            'default' => '',
+            'description' => 'ID образца',
+        ),
+        'sex' => array(
+            'default' => 0,
+            'description' => 'Пол',
+        ),
+        'in_analysis_dataset' => array(
+            'default' => 0,
+            'description' => 'В анализе набора данных',
+        ),
+        'release_conditions' => array(
+            'default' => 0,
+            'description' => 'Кандидат',
+        ),
+        'contributor' => array(
+            'default' => '',
+            'description' => 'Источник',
         ),
     );
 

@@ -68,10 +68,22 @@ class Point {
 
     /**
      * Экпортирует массив полей ключ-значение: имя поля-значение
+     * @param array $filter
      * @return array
      */
-    public function export() {
-        return $this->fields;
+    public function export(array $filter = array()) {
+        if (!$filter) {
+            return $this->fields;
+        }
+
+        $exportData = array();
+        foreach ($this->fields as $field => $value) {
+            if (array_key_exists($field, $filter) || in_array($field, $filter)) {
+                $exportData[$field] = $value;
+            }
+        }
+
+        return $exportData;
     }
 
     public function exportOld() {
