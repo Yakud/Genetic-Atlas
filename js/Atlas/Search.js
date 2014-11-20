@@ -14,38 +14,27 @@ Atlas.Search = function(MarkerStorage, Map) {
 /**
  *
  * @param text
+ * @param ageFrom
+ * @param ageTo
  */
-Atlas.Search.prototype.search = function(text) {
+Atlas.Search.prototype.search = function(text, ageFrom, ageTo) {
     var t = this;
 
-
     if (!text.length) {
-        t.MarkerStorage.getMarkers(function(Markers) {
-            t.Map.clearAll();
-
-            Markers.map(function(Marker) {
-                t.Map.addMarker(Marker);
-            });
-
-            if (t.onSearchEvent !== null) {
-                t.onSearchEvent(Markers);
-            }
-
-            t.Map.reindexMarkers();
-        });
-    } else {
-        t.MarkerStorage.searchMarkersFullText(text, function(Markers) {
-            t.Map.clearAll();
-
-            Markers.map(function(Marker) {
-                t.Map.addMarker(Marker);
-            });
-
-            if (t.onSearchEvent !== null) {
-                t.onSearchEvent(Markers);
-            }
-
-            t.Map.reindexMarkers();
-        });
+        text = '*';
     }
+
+    t.MarkerStorage.searchMarkersFullText(text, ageFrom, ageTo, function(Markers) {
+        t.Map.clearAll();
+
+        Markers.map(function(Marker) {
+            t.Map.addMarker(Marker);
+        });
+
+        if (t.onSearchEvent !== null) {
+            t.onSearchEvent(Markers);
+        }
+
+        t.Map.reindexMarkers();
+    });
 };

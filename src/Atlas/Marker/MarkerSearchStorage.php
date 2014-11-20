@@ -1,8 +1,7 @@
 <?php
 namespace Atlas\Marker;
-use Elastica\Request;
-use Lib\Storage\ElasticStorage;
 
+use Elastica\Request;
 /**
  *
  * @author akiselev
@@ -11,24 +10,24 @@ class MarkerSearchStorage extends MarkerElasticStorage {
     /**
      * Полнотекстовый поиск по всем полям
      * @param string $query
+     * @param int $ageFrom
+     * @param int $ageTo
      * @return Marker[]
      */
-    public function searchByTextQuery($query) {
-        $query = array(
+    public function searchByTextQuery($query, $ageFrom, $ageTo) {
+        $query = [
             'size' => 10000,
-            'query' => array(
-                'query_string' => array(
-                    'query' => $query,
-                )
-            )
-        );
+            'query' => [
+                'query_string' => [
+                    'query' => "$query AND (age_from:[{$ageFrom} TO {$ageTo}] OR age_to:[{$ageFrom} TO {$ageTo}] OR age:[{$ageFrom} TO {$ageTo}])",
+                ],
+            ],
+        ];
 
         $path = $this->getIndex()->getName() . '/' . $this->getType()->getName() . '/_search';
 
         $response = $this->getClient()->request($path, Request::GET, $query);
         $responseArray = $response->getData();
-
-//        var_export($responseArray);
 
         if (!isset($responseArray['hits']) || !isset($responseArray['hits']['hits'])) {
             return [];
@@ -38,10 +37,59 @@ class MarkerSearchStorage extends MarkerElasticStorage {
         $Markers = [];
         foreach ($results as $hit) {
             $Marker = $this->getMarker($hit['_source']);
-//            $Markers[$hit['_score']][] = $Marker;
             $Markers[] = $Marker;
         }
 
         return $Markers;
+    }
+
+    /**
+     * Возвращает массив максимального и минимального возраста
+     * @return array
+     */
+    public function getAgesRange() {
+        $query = array(
+            "aggs" => [
+                "min_age" => [
+                    "min" => [
+                        "field" => "age",
+                    ],
+                ],
+                "max_age" => [
+                    "max" => [
+                        "field" => "age",
+                    ],
+                ],
+                "min_age_from" => [
+                    "min" => [
+                        "field" => "age_from",
+                    ],
+                ],
+                "max_age_to" => [
+                    "max" => [
+                        "field" => "age_to",
+                    ],
+                ],
+            ],
+        );
+
+        $path = $this->getIndex()->getName() . '/' . $this->getType()->getName() . '/_search';
+
+        $response = $this->getClient()->request($path, Request::GET, $query);
+        $responseArray = $response->getData();
+
+        if (is_null($responseArray['aggregations']['min_age']['value']) || is_null($responseArray['aggregations']['max_age']['value'])) {
+            $ages = [
+                'min' => $responseArray['aggregations']['min_age_from']['value'],
+                'max' => $responseArray['aggregations']['max_age_to']['value'],
+            ];
+        } else {
+            $ages = [
+                'min' => min([$responseArray['aggregations']['min_age']['value'], $responseArray['aggregations']['min_age_from']['value']]),
+                'max' => max([$responseArray['aggregations']['max_age']['value'], $responseArray['aggregations']['max_age_to']['value']]),
+            ];
+        }
+
+        return $ages;
     }
 } 

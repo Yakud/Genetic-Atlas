@@ -23,36 +23,35 @@ body {
 .titleOfMarker {
     position: absolute;
     width: 200px;
-    margin-left: -100px;
     font-size: 14px;
     font-weight: bold;
     text-align: center;
 }
 
 #fulltext-search {
-    left: 50%;
     width: 350px;
-    margin-left: -175px;
-    height: 25px;
-    font-size: 23px;
+    height: 18px;
+    font-size: 21px;
     padding: 4px;
 }
 
 #search-result {
     left: 50%;
-    top: 40px;
+    top: 3px;
     width: 350px;
-    margin-left: -175px;
-
 }
 
 #click-details, #click-details-back {
     width: 250px;
     height: 90%;
     left: 100%;
-    top: 30px;
     margin-left: -250px;
+    top: 30px;
     font-size: 12px;
+}
+
+#click-details {
+    overflow: auto;
 }
 
 #click-details-back {
@@ -67,3 +66,52 @@ body {
 ul {
     padding-left: 25px;
 }
+
+#age-range {
+    width: 254px;
+    height: 7px;
+    display: inline-block;
+    margin-right: 6px;
+
+    /*position: absolute;*/
+    /*left: 50%;*/
+    /*margin-left: -168px;*/
+    /*top: 42px;*/
+}
+
+.ui-slider .ui-slider-handle {
+    height: 0.6em!important;
+
+    width: 5px !important;
+    margin-left: 0!important;
+    margin-top: 2px!important;
+
+    /*height: 16px !important;*/
+    /*width: 3px !important;*/
+    /*margin-top: -8px;*/
+}
+
+.amount {
+    width: 40px;
+}
+
+#age-inputs {
+    margin-left: 0;
+    margin-top: -2px;
+    font-size: 21px;
+
+}
+
+.clear-search {
+    position: absolute;
+    z-index: 10000;
+    margin-left: 342px;
+    margin-top: -25px;
+}
+
+.clear-search a {
+    text-decoration: none;
+    z-index: 10000;
+}
+
+/*******************/
