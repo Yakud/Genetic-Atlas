@@ -97,6 +97,7 @@
 
             $('.clear-search a').click(function() {
                 var $range = $("#age-range");
+                $('#fulltext-search').val('');
                 Search.search("*", $range.slider("values", 0), $range.slider("values", 1));
             });
         });
