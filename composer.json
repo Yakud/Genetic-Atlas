@@ -1,0 +1,19 @@
+{
+    "name": "yakud/atlas",
+    "authors": [
+        {
+            "name": "Aleksey Kiselev",
+            "email": "yakudgm@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "predis/predis": "1.0.0",
+        "ruflin/elastica": "dev-master"
+    },
+    "autoload": {
+        "classmap": [
+            "src"
+        ]
+    }
+}
