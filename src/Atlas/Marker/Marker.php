@@ -66,17 +66,17 @@ class Marker extends Storage {
                 'default' => '',
                 'description' => 'Источник',
             ),
+            'age' => array(
+                'default' => 0,
+                'description' => 'Возраст',
+            ),
             'age_from' => array(
                 'default' => 0,
-                'description' => 'Возраст от',
+                'description' => 'Возраст от ',
             ),
             'age_to' => array(
                 'default' => 0,
                 'description' => 'Возраст до',
-            ),
-            'year' => array(
-                'default' => 0,
-                'description' => 'Год',
             ),
         ];
     }

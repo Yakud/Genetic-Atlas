@@ -52,9 +52,18 @@ body {
     left: 100%;
     top: 30px;
     margin-left: -250px;
+    font-size: 12px;
 }
 
 #click-details-back {
     opacity: 0.4;
     background-color: white;
+}
+
+.population-markers {
+    display: none;
+}
+
+ul {
+    padding-left: 25px;
 }

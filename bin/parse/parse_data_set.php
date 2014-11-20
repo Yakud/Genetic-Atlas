@@ -40,6 +40,8 @@ while ($buffer = fgets($handle)) {
         $town = null;
     }
 
+    $age_from = rand(1000, 50000);
+
     $Marker = new \Atlas\Marker\Marker([
         'type' => 1,
         'sample_id' => $sample_id,
@@ -54,6 +56,8 @@ while ($buffer = fgets($handle)) {
         'in_analysis_dataset' => (bool)$in_analysis_dataset,
         'release_conditions' => (bool)$release_conditions,
         'contributor' => $contributor,
+        'age_from' => $age_from,
+        'age_to' => $age_from + rand(1000, 3000),
     ]);
 
     $StorageRedis->save($Marker);
