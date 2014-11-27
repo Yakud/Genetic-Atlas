@@ -9,17 +9,21 @@ use Elastica\Request;
 class MarkerSearchStorage extends MarkerElasticStorage {
     /**
      * Полнотекстовый поиск по всем полям
-     * @param string $query
+     * @param string $queryLucene
      * @param int $ageFrom
      * @param int $ageTo
      * @return Marker[]
      */
-    public function searchByTextQuery($query, $ageFrom, $ageTo) {
+    public function searchByTextQuery($queryLucene, $ageFrom, $ageTo) {
+        if ($queryLucene == '') {
+            $queryLucene = '*';
+        }
+
         $query = [
-            'size' => 10000,
+            'size' => 1000000,
             'query' => [
                 'query_string' => [
-                    'query' => "$query AND (age_from:[{$ageFrom} TO {$ageTo}] OR age_to:[{$ageFrom} TO {$ageTo}] OR age:[{$ageFrom} TO {$ageTo}])",
+                    'query' => "($queryLucene) AND (age_from:[{$ageFrom} TO {$ageTo}] OR age_to:[{$ageFrom} TO {$ageTo}] OR age:[{$ageFrom} TO {$ageTo}])",
                 ],
             ],
         ];

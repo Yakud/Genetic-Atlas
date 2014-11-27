@@ -19,6 +19,41 @@ body {
     z-index: 10000;
 }
 
+.link-no-line {
+    text-decoration: none;
+    color: #227dd2;
+    font-weight: bold;
+}
+
+.panel-header {
+    margin: 3px;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.btn {
+    width: 100px;
+    padding: 4px;
+    border: 1px solid #5d5d5d;
+    border-radius: 2px;
+    background-color: #7d7d7d;
+    text-align: center;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+.btn.btn-active {
+    color: #9BD4E2;
+    border: 1px solid #485357;
+    background-color: #5C5B5B;
+}
+
 /* Заголовок маркера */
 .titleOfMarker {
     position: absolute;
@@ -41,30 +76,64 @@ body {
     width: 350px;
 }
 
-#click-details, #click-details-back {
+.panel {
     width: 250px;
-    height: 90%;
+    height: 100%;
+    font-size: 12px;
+}
+
+#panel-wrapper {
+    height: calc(100% - 45px);
+    top: 30px;
     left: 100%;
     margin-left: -250px;
-    top: 30px;
-    font-size: 12px;
 }
 
 #click-details {
     overflow: auto;
+    height: 45%;
+    border: 1px solid black;
 }
 
-#click-details-back {
+.panel-ul-result {
+    height: calc(100% - 20px);
+    overflow: auto;
+}
+
+.panel-ul-result ul {
+    margin-top: 2px;
+    list-style: none;
+}
+
+#panel-search{
+    height: 50%;
+}
+
+#panel-checked {
+    height: calc(50% - 25px);
+}
+
+#panel-search {
+    border-bottom: 1px solid #878787;
+}
+
+#panel-back {
+    height: calc(100% - 45px);
+    top: 30px;
+    position: absolute;
+    z-index: 1000;
+    left: 100%;
+    margin-left: -250px;
     opacity: 0.4;
     background-color: white;
 }
 
-.population-markers {
+.population-markers, .checked-population-markers {
     display: none;
 }
 
 ul {
-    padding-left: 25px;
+    padding-left: 6px;
 }
 
 #age-range {
@@ -112,6 +181,20 @@ ul {
 .clear-search a {
     text-decoration: none;
     z-index: 10000;
+}
+
+#buttons {
+    left: 20px;
+    top: calc(100% - 60px);
+}
+
+.remove-selected {
+    float: right;
+    margin: -2px 7px 0 0;
+}
+
+.alder-select {
+    margin-top: 2px;
 }
 
 /*******************/

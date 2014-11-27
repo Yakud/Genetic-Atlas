@@ -24,12 +24,17 @@ Atlas.Marker.MarkerModel.prototype.import = function (data) {
     this.lat  = data.lat  !== undefined ? data.lat  : 0;
     this.lon  = data.lon  !== undefined ? data.lon  : 0;
     this.type = data.type !== undefined ? data.type : null;
-    this.data = {
-        population_id : data.population_id,
-        age : data.age,
-        age_from : data.age_from,
-        age_to : data.age_to,
-    };
+
+    if (data.data === undefined) {
+        this.data = {
+            population_id : data.population_id,
+            age : data.age,
+            age_from : data.age_from,
+            age_to : data.age_to,
+        };
+    } else {
+        this.data = data.data;
+    }
 
     return this;
 };

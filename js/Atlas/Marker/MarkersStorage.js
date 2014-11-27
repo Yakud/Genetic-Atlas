@@ -33,12 +33,8 @@ Atlas.Marker.MarkerStorage.prototype.getMarkers = function(callback) {
     });
 };
 
-Atlas.Marker.MarkerStorage.prototype.searchMarkersFullText = function(text, ageFrom, ageTo, callback) {
-    this.request(this.urlSearchMarkersFulltext, {
-        text    : text,
-        ageFrom : ageFrom,
-        ageTo   : ageTo
-    }, function(response) {
+Atlas.Marker.MarkerStorage.prototype.searchMarkersFullText = function(params, callback) {
+    this.request(this.urlSearchMarkersFulltext, params, function(response) {
         var markers = [];
         var marker;
 
