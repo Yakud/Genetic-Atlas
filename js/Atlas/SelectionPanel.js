@@ -71,8 +71,6 @@ Atlas.SelectionPanel.prototype.showCheckedPanel = function() {
         var jsEvent = "$('.checked-population-markers[data-population=" + population + "]').toggle();";
         var selectAlder = '';
 
-        console.log(CurrentTypeAnalyze );
-
         selectAlder = '<select class="alder-select inline" style="' + (CurrentTypeAnalyze == TYPE_ALDER ? '' : 'display: none;') +' ">';
         selectAlder += '<option>None</option>';
         selectAlder += '<option>Ref1</option>';
@@ -93,6 +91,7 @@ Atlas.SelectionPanel.prototype.showCheckedPanel = function() {
 
 Atlas.SelectionPanel.prototype.checkPopulation = function(populationName) {
     var t = this;
+
     var markers = t.CurrentPopulations[populationName].markers;
     var $populationWrapper = $('li.population-wrapper[data-population="' + populationName + '"]');
 

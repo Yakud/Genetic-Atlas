@@ -44,8 +44,9 @@ Atlas.Map.prototype.addMarker = function(Marker) {
     });
 
     google.maps.event.addListener(marker, 'click', function() {
-        var populations = t.calcPopulation([marker]);
-        t.showPopulations(populations);
+        var markers = [];
+        markers.push(new MarkerModel(marker.data));
+        Panel.addToSearchPanel(markers);
     });
 
     marker.data = Marker.export();
@@ -90,8 +91,7 @@ Atlas.Map.prototype.onClickCluster = function() {
             markers.push(new MarkerModel(markerData));
         });
 
-        var populations = Panel.calcPopulation(markers);
-        Panel.showPopulations(populations);
+        Panel.addToSearchPanel(markers);
     };
 };
 
